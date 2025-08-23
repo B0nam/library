@@ -12,7 +12,7 @@ COPY --chown=gradle:gradle . /home/gradle/project
 WORKDIR /home/gradle/project
 
 RUN if [ "$RUN_INTEGRATION_TESTS" = "true" ]; then \
-      ./gradlew build --no-daemon; \
+      ./gradlew build -PrunIntegrationTests --no-daemon; \
     else \
       ./gradlew build -x test --no-daemon; \
     fi
