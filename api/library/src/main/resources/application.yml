@@ -8,7 +8,7 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
   datasource:
-    url: jdbc:postgresql://localhost:5432/library_db
+    url: jdbc:postgresql://localhost:5432/library_db # TODO: ADICIONAR VARIAVEIS DE AMBIENTE
     username: admin # TODO: ADICIONAR VARIAVEIS DE AMBIENTE
     password: admin@123 # TODO: ADICIONAR VARIAVEIS DE AMBIENTE
     driver-class-name: org.postgresql.Driver
