@@ -22,7 +22,7 @@ public class LibraryUserResponseDTO implements LibraryUserResponseDTOOpenApi {
     private String email;
 
     @NotBlank
-    private String telephone;
+    private String phone;
 
     @NotNull
     private LocalDateTime createdAt;

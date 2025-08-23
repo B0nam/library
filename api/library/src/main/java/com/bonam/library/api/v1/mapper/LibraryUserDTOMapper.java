@@ -5,6 +5,8 @@ import com.bonam.library.api.v1.model.response.LibraryUserResponseDTO;
 import com.bonam.library.domain.libraryusers.model.LibraryUser;
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
+
 @UtilityClass
 public class LibraryUserDTOMapper {
 
@@ -21,8 +23,14 @@ public class LibraryUserDTOMapper {
                 .id(libraryUser.getId())
                 .name(libraryUser.getName())
                 .email(libraryUser.getEmail())
+                .phone(libraryUser.getPhone())
                 .createdAt(libraryUser.getCreatedAt())
-                .telephone(libraryUser.getPhone())
                 .build();
+    }
+
+    public static List<LibraryUserResponseDTO> toResponseDTOList(List<LibraryUser> libraryUsers) {
+        return libraryUsers.stream()
+                .map(LibraryUserDTOMapper::toResponseDTO)
+                .toList();
     }
 }

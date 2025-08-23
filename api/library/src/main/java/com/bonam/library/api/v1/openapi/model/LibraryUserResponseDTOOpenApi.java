@@ -20,5 +20,5 @@ public interface LibraryUserResponseDTOOpenApi {
     LocalDateTime getCreatedAt();
 
     @Schema(description = "Telephone number of the library user", example = "+5544999999999")
-    String getTelephone();
+    String getPhone();
 }
