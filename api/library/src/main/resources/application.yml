@@ -1,0 +1,36 @@
+server:
+  port: 8000
+  shutdown: graceful
+
+spring:
+  application:
+    name: library
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/library_db # TODO: ADICIONAR VARIAVEIS DE AMBIENTE
+    username: admin # TODO: ADICIONAR VARIAVEIS DE AMBIENTE
+    password: admin@123 # TODO: ADICIONAR VARIAVEIS DE AMBIENTE
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+management:  #TODO: VERIFICAR CONFIGURACOES DO HEALTHCHECK
+  endpoints:
+    enabled-by-defalut: false
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      enabled: true
+      probes:
+        enabled: true
+  health:
+    defaults:
+      enabled: false
