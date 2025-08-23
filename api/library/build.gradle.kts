@@ -2,6 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.5.5"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.36"
 }
 
 group = "com.bonam"
@@ -32,31 +33,55 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-
-	implementation("org.liquibase:liquibase-core")
-	implementation("org.postgresql:postgresql:$postgresVersion")
-	implementation("org.testcontainers:postgresql:$testcontainersVersion")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
 
+	implementation("org.liquibase:liquibase-core")
+	runtimeOnly("org.postgresql:postgresql:$postgresVersion")
+
 	compileOnly("org.projectlombok:lombok")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.projectlombok:lombok")
+
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.testcontainers:testcontainers:$testcontainersVersion") // TODO: VERIFICAR VERSAO DO TESTCONTAINERS
-	testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion") // TODO: VERIFICAR VERSAO DO TESTCONTAINERS
-	testImplementation("org.testcontainers:postgresql:$testcontainersVersion") // TODO: VERIFICAR VERSAO DO TESTCONTAINERS
+	testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+	testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
+	testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-tasks.withType<Test> {
-	useJUnitPlatform()
+springBoot {
+	mainClass.set("com.bonam.library.LibraryApplication")
 }
 
-tasks.register<Test>("integrationTest") {
-	description = "Executes the integration tests."
-	group = "verification"
-	useJUnitPlatform {
-		includeTags("integration")
+tasks {
+	test {
+		useJUnitPlatform {
+			excludeTags("integration")
+		}
+	}
+
+	register<Test>("integrationTest") {
+		description = "Runs integration tests."
+		group = "verification"
+		useJUnitPlatform {
+			includeTags("integration")
+		}
+		shouldRunAfter(test)
+
+		onlyIf {
+			project.hasProperty("runIntegrationTests") ||
+					System.getenv("RUN_INTEGRATION_TESTS") == "true"
+		}
+	}
+
+	build {
+		if (project.hasProperty("runIntegrationTests") ||
+			System.getenv("RUN_INTEGRATION_TESTS") == "true"
+		) {
+			dependsOn("integrationTest")
+		}
 	}
 }
