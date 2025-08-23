@@ -1,8 +1,8 @@
 package com.bonam.library.domain.loans.model;
 
 import com.bonam.library.domain.books.model.Book;
+import com.bonam.library.domain.libraryusers.model.LibraryUser;
 import com.bonam.library.domain.loans.enums.LoanStatus;
-import com.bonam.library.domain.users.model.LibraryUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

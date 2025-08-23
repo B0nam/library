@@ -23,6 +23,12 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE library_user;
+                DELETE FROM DATABASECHANGELOG WHERE ID='create-table-library-user';
+            </sql>
+        </rollback>
     </changeSet>
 
     <changeSet id="create-table-book" author="daniel.rissardi">
@@ -46,6 +52,12 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE book;
+                DELETE FROM DATABASECHANGELOG WHERE ID='create-table-book';
+            </sql>
+        </rollback>
     </changeSet>
 
     <changeSet id="create-table-loan" author="daniel.rissardi">
@@ -81,5 +93,13 @@
                 baseColumnNames="book_id"
                 referencedTableName="book"
                 referencedColumnNames="id"/>
+        <rollback>
+            <sql>
+                ALTER TABLE loan DROP CONSTRAINT fk_loan_user;
+                ALTER TABLE loan DROP CONSTRAINT fk_loan_book;
+                DROP TABLE loan;
+                DELETE FROM DATABASECHANGELOG WHERE ID='create-table-loan';
+            </sql>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

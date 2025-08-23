@@ -1,4 +1,4 @@
-package com.bonam.library.domain.users.model;
+package com.bonam.library.domain.libraryusers.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +17,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
 public class LibraryUser {
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -35,7 +36,7 @@ public class LibraryUser {
     private LocalDateTime createdAt;
 
     @NotNull
-    private String telephone;
+    private String phone;
 
     @PrePersist
     public void setCreatedAt() {
