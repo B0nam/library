@@ -20,7 +20,6 @@ public class GetAllBookController implements GetAllBookControllerOpenApi {
 
     private final GetAllBookService getAllBookService;
 
-    @Override
     @GetMapping
     public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
         var books = getAllBookService.getAllBooks();

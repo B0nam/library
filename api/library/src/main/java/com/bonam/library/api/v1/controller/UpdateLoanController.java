@@ -22,7 +22,6 @@ public class UpdateLoanController implements UpdateLoanControllerOpenApi {
 
     private final UpdateLoanService updateLoanService;
 
-    @Override
     @PutMapping("/{id}")
     public ResponseEntity<LoanResponseDTO> updateLoan(@PathVariable Long id, @RequestBody @Valid UpdateLoanRequestDTO request) {
         var loan = LoanDTOMapper.toEntity(request);

@@ -13,6 +13,6 @@ class ActiveLoanExistsExceptionTest {
         var exception = new ActiveLoanExistsException(resource, identifier);
 
         assertThat(exception)
-                .hasMessage("Book already has an active loan");
+                .hasMessage("Book already has an active loan with identifier: 123");
     }
 }

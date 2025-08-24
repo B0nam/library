@@ -10,12 +10,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,5 +67,56 @@ class GetBookServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> getBookService.getBookById(bookId));
+    }
+
+    @Test
+    void shouldGetBooksByCategory_WhenBooksExist() {
+        String category = "Programming";
+        LocalDate publishDate = LocalDate.now();
+
+        List<Book> expectedBooks = List.of(
+                Book.builder()
+                        .id(1L)
+                        .title("Clean Code")
+                        .author("Robert C. Martin")
+                        .isbn("9780132350884")
+                        .publishDate(publishDate)
+                        .category(category)
+                        .build(),
+                Book.builder()
+                        .id(2L)
+                        .title("Design Patterns")
+                        .author("Erich Gamma")
+                        .isbn("9780201633610")
+                        .publishDate(publishDate)
+                        .category(category)
+                        .build()
+        );
+
+        when(bookRepository.findAllByCategory(anyString()))
+                .thenReturn(expectedBooks);
+
+        List<Book> result = getBookService.getBooksByCategory(category);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("Clean Code", result.get(0).getTitle());
+        assertEquals("Design Patterns", result.get(1).getTitle());
+        verify(bookRepository, times(1)).findAllByCategory(category);
+    }
+
+    @Test
+    void shouldGetBooksByCategory_WhenNoBooksExist() {
+        String category = "NonExistentCategory";
+        List<Book> emptyList = List.of();
+
+        when(bookRepository.findAllByCategory(anyString()))
+                .thenReturn(emptyList);
+
+        List<Book> result = getBookService.getBooksByCategory(category);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(bookRepository, times(1)).findAllByCategory(category);
     }
 }
