@@ -3,6 +3,9 @@ package com.bonam.library.api.v1.exceptionhandler;
 import com.bonam.library.api.v1.exception.ActiveLoanExistsException;
 import com.bonam.library.api.v1.exception.ResourceNotFoundException;
 import com.bonam.library.api.v1.model.response.LibraryErrorResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,12 +14,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -101,8 +107,79 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.CONFLICT.value(), responseEntity.getBody().getStatus());
-        assertEquals("Book already has an active loan with identifier: 1", responseEntity.getBody().getMessage());
+        assertEquals("Book already has an active loan", responseEntity.getBody().getMessage());
         assertEquals("/api/test", responseEntity.getBody().getPath());
         assertEquals(HttpStatus.CONFLICT.getReasonPhrase(), responseEntity.getBody().getError());
+    }
+
+    @Test
+    void handleConstraintViolationException_ShouldReturnBadRequest() {
+        Set<ConstraintViolation<?>> violations = new HashSet<>();
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        Path path = mock(Path.class);
+
+        when(path.toString()).thenReturn("nome");
+        when(violation.getPropertyPath()).thenReturn(path);
+        when(violation.getMessage()).thenReturn("não pode ser vazio");
+        violations.add(violation);
+
+        ConstraintViolationException exception = mock(ConstraintViolationException.class);
+        when(exception.getConstraintViolations()).thenReturn(violations);
+
+        when(webRequest.getDescription(false)).thenReturn("uri=/api/test");
+
+        ResponseEntity<LibraryErrorResponse> responseEntity =
+                globalExceptionHandler.handleConstraintViolationException(exception, webRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals("nome: não pode ser vazio", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void handleTransactionSystemException_WithConstraintViolation_ShouldDelegateToConstraintHandler() {
+        TransactionSystemException transactionException = mock(TransactionSystemException.class);
+        ConstraintViolationException constraintException = mock(ConstraintViolationException.class);
+
+        when(transactionException.getRootCause()).thenReturn(constraintException);
+
+        Set<ConstraintViolation<?>> violations = new HashSet<>();
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        Path path = mock(Path.class);
+
+        when(path.toString()).thenReturn("campo");
+        when(violation.getPropertyPath()).thenReturn(path);
+        when(violation.getMessage()).thenReturn("erro de validação");
+        violations.add(violation);
+
+        when(constraintException.getConstraintViolations()).thenReturn(violations);
+
+        when(webRequest.getDescription(false)).thenReturn("uri=/api/test");
+
+        ResponseEntity<LibraryErrorResponse> responseEntity =
+                globalExceptionHandler.handleTransactionSystemException(transactionException, webRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals("campo: erro de validação", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void handleTransactionSystemException_WithOtherCause_ShouldReturnBadRequest() {
+        TransactionSystemException transactionException = mock(TransactionSystemException.class);
+        RuntimeException cause = new RuntimeException("Erro na transação");
+
+        when(transactionException.getRootCause()).thenReturn(cause);
+        when(webRequest.getDescription(false)).thenReturn("uri=/api/test");
+
+        ResponseEntity<LibraryErrorResponse> responseEntity =
+                globalExceptionHandler.handleTransactionSystemException(transactionException, webRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals("Erro na transação", responseEntity.getBody().getMessage());
     }
 }

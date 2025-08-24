@@ -1,6 +1,7 @@
 package com.bonam.library.api.v1.model.request;
 
 import com.bonam.library.api.v1.openapi.model.CreateLibraryUserRequestDTOOpenApi;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +13,7 @@ public class CreateLibraryUserRequestDTO implements CreateLibraryUserRequestDTOO
     @NotBlank(message = "Name is required")
     private String name;
 
+    @Email
     @NotBlank(message = "Email is required")
     private String email;
 

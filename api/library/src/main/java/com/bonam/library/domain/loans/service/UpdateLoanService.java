@@ -17,6 +17,8 @@ public class UpdateLoanService {
     public Loan updateLoan(Long id, Loan updatedLoan) {
         var loan = getLoanService.getLoanById(id);
 
+        loan.setStatus(Optional.ofNullable(updatedLoan.getStatus())
+                .orElse(loan.getStatus()));
         loan.setReturnDate(Optional.ofNullable(updatedLoan.getReturnDate())
                 .orElse(loan.getReturnDate()));
         loan.setLoanDate(Optional.ofNullable(updatedLoan.getLoanDate())

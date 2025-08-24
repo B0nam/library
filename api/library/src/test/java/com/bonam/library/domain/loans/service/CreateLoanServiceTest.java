@@ -81,6 +81,6 @@ class CreateLoanServiceTest {
 
         assertThatThrownBy(() -> createLoanService.createLoan(loan, bookId, libraryUserId))
                 .isInstanceOf(ActiveLoanExistsException.class)
-                .hasMessage("Book already has an active loan with identifier: " + bookId);
+                .hasMessage("Book already has an active loan");
     }
 }

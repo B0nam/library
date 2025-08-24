@@ -5,6 +5,7 @@ import com.bonam.library.api.v1.model.request.UpdateBookRequestDTO;
 import com.bonam.library.api.v1.model.response.BookResponseDTO;
 import com.bonam.library.api.v1.openapi.controller.UpdateBookControllerOpenApi;
 import com.bonam.library.domain.books.service.UpdateBookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class UpdateBookController implements UpdateBookControllerOpenApi {
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @RequestBody UpdateBookRequestDTO request) {
+    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @Valid @RequestBody UpdateBookRequestDTO request) {
         var book = BookDTOMapper.toEntity(request);
         var updatedBook = updateBookService.updateBook(id, book);
         return ResponseEntity.status(HttpStatus.OK).body(BookDTOMapper.toResponseDTO(updatedBook));

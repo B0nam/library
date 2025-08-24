@@ -1,6 +1,7 @@
 package com.bonam.library.api.v1.model.request;
 
 import com.bonam.library.api.v1.openapi.model.CreateBookRequestDTOOpenApi;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,18 +14,18 @@ import java.time.LocalDate;
 @Builder
 public class CreateBookRequestDTO implements CreateBookRequestDTOOpenApi {
 
-    @NotNull
+    @NotBlank(message = "Title is required")
     private String title;
 
-    @NotNull
+    @NotBlank(message = "Author is required")
     private String author;
 
-    @NotNull
+    @NotBlank(message = "ISBN is required")
     private String isbn;
 
-    @NotNull
+    @NotNull(message = "Publish date is required")
     private LocalDate publishDate;
 
-    @NotNull
+    @NotBlank(message = "Category is required")
     private String category;
 }

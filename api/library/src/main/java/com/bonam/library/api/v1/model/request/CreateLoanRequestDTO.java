@@ -13,12 +13,12 @@ import java.time.LocalDate;
 @Builder
 public class CreateLoanRequestDTO implements CreateLoanRequestDTOOpenApi {
 
-    @NotNull
+    @NotNull(message = "Library User ID is required")
     private Long libraryUserId;
 
-    @NotNull
+    @NotNull(message = "Book ID is required")
     private Long bookId;
 
-    @NotNull
+    @NotNull(message = "Expected return date")
     private LocalDate returnDate;
 }

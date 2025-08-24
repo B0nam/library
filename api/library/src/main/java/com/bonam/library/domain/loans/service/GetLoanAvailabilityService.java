@@ -15,6 +15,6 @@ public class GetLoanAvailabilityService {
 
     public boolean isActiveLoanForBookId(Long bookId) {
         var book = getBookService.getBookById(bookId);
-        return loanRepository.existsLoanByBookIdAndStatusNot(book.getId(), LoanStatus.RETURNED.toString());
+        return loanRepository.existsLoanByBookIdAndStatusNot(book.getId(), LoanStatus.RETURNED);
     }
 }

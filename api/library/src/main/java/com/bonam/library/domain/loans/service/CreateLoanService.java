@@ -24,7 +24,7 @@ public class CreateLoanService {
         var book = getBookService.getBookById(bookId);
 
         if (getLoanAvailabilityService.isActiveLoanForBookId(bookId)) {
-            throw new ActiveLoanExistsException("Book", bookId.toString());
+            throw new ActiveLoanExistsException(book.getTitle(), bookId.toString());
         }
 
         loan.setLibraryUser(libraryUser);
