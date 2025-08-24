@@ -1,13 +1,13 @@
 package com.bonam.library.api.v1.openapi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
-@Schema(name = "RemoveLibraryUserController")
-public interface RemoveLibraryUserControllerOpenApi {
+@Tag(name = "Library Users", description = "API for library user management")
+public interface DeleteLibraryUserControllerOpenApi {
 
     @Operation(summary = "Remove library user by ID", description = "Remove a library user by their unique ID")
     @ApiResponses(value = {

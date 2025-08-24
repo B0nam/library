@@ -1,10 +1,10 @@
 package com.bonam.library.api.v1.controller;
 
+import com.bonam.library.api.v1.mapper.LibraryUserDTOMapper;
 import com.bonam.library.api.v1.model.request.UpdateLibraryUserRequestDTO;
 import com.bonam.library.api.v1.model.response.LibraryUserResponseDTO;
-import com.bonam.library.api.v1.mapper.LibraryUserDTOMapper;
 import com.bonam.library.api.v1.openapi.controller.UpdateLibraryUserControllerOpenApi;
-import com.bonam.library.api.v1.service.UpdateLibraryUserService;
+import com.bonam.library.domain.libraryusers.service.UpdateLibraryUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

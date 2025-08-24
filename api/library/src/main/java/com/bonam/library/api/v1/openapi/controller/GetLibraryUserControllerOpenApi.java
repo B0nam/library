@@ -2,12 +2,12 @@ package com.bonam.library.api.v1.openapi.controller;
 
 import com.bonam.library.api.v1.model.response.LibraryUserResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
-@Schema(name = "GetLibraryUserController")
+@Tag(name = "Library Users", description = "API for library user management")
 public interface GetLibraryUserControllerOpenApi {
 
     @Operation(summary = "Get library user by ID", description = "Retrieve a library user by their unique ID")

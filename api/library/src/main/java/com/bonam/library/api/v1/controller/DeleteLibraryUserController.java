@@ -1,7 +1,7 @@
 package com.bonam.library.api.v1.controller;
 
-import com.bonam.library.api.v1.openapi.controller.RemoveLibraryUserControllerOpenApi;
-import com.bonam.library.domain.libraryusers.service.RemoveLibraryUserService;
+import com.bonam.library.api.v1.openapi.controller.DeleteLibraryUserControllerOpenApi;
+import com.bonam.library.domain.libraryusers.service.DeleteLibraryUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/library-user")
 @RequiredArgsConstructor
-public class RemoveLibraryUserController implements RemoveLibraryUserControllerOpenApi {
+public class DeleteLibraryUserController implements DeleteLibraryUserControllerOpenApi {
 
-    private final RemoveLibraryUserService removeLibraryUserService;
+    private final DeleteLibraryUserService removeLibraryUserService;
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> removeLibraryUser(@PathVariable Long id) {

@@ -1,12 +1,14 @@
-package com.bonam.library.api.v1.service;
+package com.bonam.library.domain.libraryusers.service;
 
 import com.bonam.library.api.v1.model.request.UpdateLibraryUserRequestDTO;
 import com.bonam.library.domain.libraryusers.model.LibraryUser;
 import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.Optional;
 
 @Service
@@ -18,16 +20,12 @@ public class UpdateLibraryUserService {
     @Transactional
     public LibraryUser updateLibraryUser(Long id, UpdateLibraryUserRequestDTO request) {
         var libraryUser = libraryUserRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Library user not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Library user not found"));
 
-        var updatedUser = LibraryUser.builder()
-                .id(libraryUser.getId())
-                .name(Optional.ofNullable(request.getName()).orElse(libraryUser.getName()))
-                .email(Optional.ofNullable(request.getEmail()).orElse(libraryUser.getEmail()))
-                .phone(Optional.ofNullable(request.getPhone()).orElse(libraryUser.getPhone()))
-                .createdAt(libraryUser.getCreatedAt())
-                .build();
+        libraryUser.setName(Optional.ofNullable(request.getName()).orElse(libraryUser.getName()));
+        libraryUser.setEmail(Optional.ofNullable(request.getEmail()).orElse(libraryUser.getEmail()));
+        libraryUser.setPhone(Optional.ofNullable(request.getPhone()).orElse(libraryUser.getPhone()));
 
-        return libraryUserRepository.save(updatedUser);
+        return libraryUserRepository.save(libraryUser);
     }
 }
