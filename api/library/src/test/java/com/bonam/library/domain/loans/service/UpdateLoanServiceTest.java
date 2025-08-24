@@ -1,5 +1,6 @@
 package com.bonam.library.domain.loans.service;
 
+import com.bonam.library.api.v1.exception.ResourceNotFoundException;
 import com.bonam.library.domain.loans.model.Loan;
 import com.bonam.library.domain.loans.repository.LoanRepository;
 import org.junit.jupiter.api.Test;
@@ -7,22 +8,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateLoanServiceTest {
 
     @Mock
     private LoanRepository loanRepository;
+
+    @Mock
+    private GetLoanService getLoanService;
 
     @InjectMocks
     private UpdateLoanService updateLoanService;
@@ -39,7 +41,7 @@ class UpdateLoanServiceTest {
         var newReturnDate = LocalDate.of(2025, 8, 24);
         updatedLoan.setReturnDate(newReturnDate);
 
-        when(loanRepository.findById(id)).thenReturn(Optional.of(existingLoan));
+        when(getLoanService.getLoanById(id)).thenReturn(existingLoan);
         when(loanRepository.save(any(Loan.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         var result = updateLoanService.updateLoan(id, updatedLoan);
@@ -49,7 +51,7 @@ class UpdateLoanServiceTest {
         assertThat(result.getReturnDate()).isEqualTo(newReturnDate);
         assertThat(result.getLoanDate()).isEqualTo(existingLoan.getLoanDate());
 
-        verify(loanRepository).findById(id);
+        verify(getLoanService).getLoanById(id);
         verify(loanRepository).save(existingLoan);
     }
 
@@ -58,10 +60,11 @@ class UpdateLoanServiceTest {
         var id = 1L;
         var updatedLoan = new Loan();
 
-        when(loanRepository.findById(id)).thenReturn(Optional.empty());
+        when(getLoanService.getLoanById(id))
+                .thenThrow(new ResourceNotFoundException("Loan not found", String.valueOf(id)));
 
-        assertThrows(ResponseStatusException.class, () ->
-            updateLoanService.updateLoan(id, updatedLoan)
+        assertThrows(ResourceNotFoundException.class, () ->
+                updateLoanService.updateLoan(id, updatedLoan)
         );
     }
 
@@ -77,7 +80,7 @@ class UpdateLoanServiceTest {
 
         var updatedLoan = new Loan();
 
-        when(loanRepository.findById(id)).thenReturn(Optional.of(existingLoan));
+        when(getLoanService.getLoanById(id)).thenReturn(existingLoan);
         when(loanRepository.save(any(Loan.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         var result = updateLoanService.updateLoan(id, updatedLoan);

@@ -1,26 +1,23 @@
 package com.bonam.library.domain.books.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.bonam.library.api.v1.exception.ResourceNotFoundException;
+import com.bonam.library.domain.books.model.Book;
+import com.bonam.library.domain.books.repository.BookRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
-import com.bonam.library.domain.books.model.Book;
-import com.bonam.library.domain.books.repository.BookRepository;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteBookServiceTest {
@@ -61,10 +58,6 @@ class DeleteBookServiceTest {
         when(bookRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-            () -> deleteBookService.deleteBook(bookId));
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Book not found", exception.getReason());
+        assertThrows(ResourceNotFoundException.class, () -> deleteBookService.deleteBook(bookId));
     }
 }

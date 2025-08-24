@@ -15,9 +15,6 @@ public class DeleteLibraryUserService {
     @Transactional
     public void removeLibraryUserById(Long id) {
         var libraryUser = getLibraryUserService.getLibraryUserById(id);
-        if(libraryUser == null) {
-            throw new RuntimeException("Library user not found with id: " + id); // TODO: EXCEPTION
-        }
-        libraryUserRepository.deleteById(id);
+        libraryUserRepository.deleteById(libraryUser.getId());
     }
 }

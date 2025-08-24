@@ -1,24 +1,22 @@
 package com.bonam.library.domain.libraryusers.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
+import com.bonam.library.api.v1.exception.ResourceNotFoundException;
+import com.bonam.library.domain.libraryusers.model.LibraryUser;
+import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.bonam.library.domain.libraryusers.model.LibraryUser;
-import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetLibraryUserServiceTest {
@@ -61,10 +59,6 @@ class GetLibraryUserServiceTest {
         when(libraryUserRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-            () -> getLibraryUserService.getLibraryUserById(userId));
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("User not found", exception.getReason());
+        assertThrows(ResourceNotFoundException.class, () -> getLibraryUserService.getLibraryUserById(userId));
     }
 }
