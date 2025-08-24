@@ -1,26 +1,23 @@
 package com.bonam.library.domain.libraryusers.service;
 
+import com.bonam.library.api.v1.exception.ResourceNotFoundException;
+import com.bonam.library.api.v1.model.request.UpdateLibraryUserRequestDTO;
+import com.bonam.library.domain.libraryusers.model.LibraryUser;
+import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
-import com.bonam.library.api.v1.model.request.UpdateLibraryUserRequestDTO;
-import com.bonam.library.domain.libraryusers.model.LibraryUser;
-import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateLibraryUserServiceTest {
@@ -30,6 +27,9 @@ class UpdateLibraryUserServiceTest {
 
     @InjectMocks
     private UpdateLibraryUserService updateLibraryUserService;
+
+    @Mock
+    private GetLibraryUserService getLibraryUserService;
 
     @Test
     void shouldUpdateLibraryUserSuccessfully() {
@@ -58,8 +58,8 @@ class UpdateLibraryUserServiceTest {
                 .createdAt(now)
                 .build();
 
-        when(libraryUserRepository.findById(anyLong()))
-                .thenReturn(Optional.of(existingUser));
+        when(getLibraryUserService.getLibraryUserById(anyLong()))
+                .thenReturn(existingUser);
         when(libraryUserRepository.save(any(LibraryUser.class)))
                 .thenReturn(updatedUser);
 
@@ -98,8 +98,8 @@ class UpdateLibraryUserServiceTest {
                 .createdAt(now)
                 .build();
 
-        when(libraryUserRepository.findById(anyLong()))
-                .thenReturn(Optional.of(existingUser));
+        when(getLibraryUserService.getLibraryUserById(anyLong()))
+                .thenReturn(existingUser);
         when(libraryUserRepository.save(any(LibraryUser.class)))
                 .thenReturn(updatedUser);
 
@@ -120,13 +120,9 @@ class UpdateLibraryUserServiceTest {
                 .name("John Doe Updated")
                 .build();
 
-        when(libraryUserRepository.findById(anyLong()))
-                .thenReturn(Optional.empty());
+        when(getLibraryUserService.getLibraryUserById(userId))
+                .thenThrow(new ResourceNotFoundException("Library User not found", userId.toString()));
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-            () -> updateLibraryUserService.updateLibraryUser(userId, request));
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Library user not found", exception.getReason());
+        assertThrows(ResourceNotFoundException.class, () -> updateLibraryUserService.updateLibraryUser(userId, request));
     }
 }

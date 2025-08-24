@@ -4,9 +4,7 @@ import com.bonam.library.domain.books.model.Book;
 import com.bonam.library.domain.books.repository.BookRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -14,12 +12,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UpdateBookService {
 
+    private final GetBookService getBookService;
     private final BookRepository bookRepository;
 
     @Transactional
     public Book updateBook(Long id, Book updatedBook) {
-        var book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
+        var book = getBookService.getBookById(id);
 
         book.setTitle(Optional.ofNullable(updatedBook.getTitle()).orElse(book.getTitle()));
         book.setAuthor(Optional.ofNullable(updatedBook.getAuthor()).orElse(book.getAuthor()));

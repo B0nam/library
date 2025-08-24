@@ -74,7 +74,9 @@
             <column name="loan_date" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="return_date" type="TIMESTAMP"/>
+            <column name="return_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
             <column name="status" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>

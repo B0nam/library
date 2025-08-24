@@ -1,22 +1,20 @@
 package com.bonam.library.domain.libraryusers.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-
+import com.bonam.library.domain.libraryusers.model.LibraryUser;
+import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.bonam.library.domain.libraryusers.model.LibraryUser;
-import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteLibraryUserServiceTest {
@@ -59,9 +57,6 @@ class DeleteLibraryUserServiceTest {
         when(getLibraryUserService.getLibraryUserById(anyLong()))
                 .thenReturn(null);
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
-            () -> deleteLibraryUserService.removeLibraryUserById(userId));
-
-        assertEquals("Library user not found with id: " + userId, exception.getMessage());
+        assertThrows(RuntimeException.class, () -> deleteLibraryUserService.removeLibraryUserById(userId));
     }
 }

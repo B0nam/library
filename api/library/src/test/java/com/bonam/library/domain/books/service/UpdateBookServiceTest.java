@@ -1,31 +1,30 @@
 package com.bonam.library.domain.books.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.Optional;
-
+import com.bonam.library.api.v1.exception.ResourceNotFoundException;
+import com.bonam.library.domain.books.model.Book;
+import com.bonam.library.domain.books.repository.BookRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.bonam.library.domain.books.model.Book;
-import com.bonam.library.domain.books.repository.BookRepository;
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateBookServiceTest {
 
     @Mock
     private BookRepository bookRepository;
+
+    @Mock
+    private GetBookService getBookService;
 
     @InjectMocks
     private UpdateBookService updateBookService;
@@ -62,8 +61,8 @@ class UpdateBookServiceTest {
                 .category("Software Engineering")
                 .build();
 
-        when(bookRepository.findById(anyLong()))
-                .thenReturn(Optional.of(existingBook));
+        when(getBookService.getBookById(bookId))
+                .thenReturn(existingBook);
         when(bookRepository.save(any(Book.class)))
                 .thenReturn(updatedBook);
 
@@ -105,8 +104,8 @@ class UpdateBookServiceTest {
                 .category("Programming")
                 .build();
 
-        when(bookRepository.findById(anyLong()))
-                .thenReturn(Optional.of(existingBook));
+        when(getBookService.getBookById(bookId))
+                .thenReturn(existingBook);
         when(bookRepository.save(any(Book.class)))
                 .thenReturn(updatedBook);
 
@@ -128,13 +127,10 @@ class UpdateBookServiceTest {
                 .title("Clean Code: Second Edition")
                 .build();
 
-        when(bookRepository.findById(anyLong()))
-                .thenReturn(Optional.empty());
+        when(getBookService.getBookById(bookId))
+                .thenThrow(new ResourceNotFoundException("Book not found", bookId.toString()));
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-            () -> updateBookService.updateBook(bookId, updateRequest));
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Book not found", exception.getReason());
+        assertThrows(ResourceNotFoundException.class,
+                () -> updateBookService.updateBook(bookId, updateRequest));
     }
 }

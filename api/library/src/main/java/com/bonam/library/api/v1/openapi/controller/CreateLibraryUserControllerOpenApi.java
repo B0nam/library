@@ -17,6 +17,5 @@ public interface CreateLibraryUserControllerOpenApi {
             @ApiResponse(responseCode = "400", description = "Invalid request data - validation errors"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    ResponseEntity<LibraryUserResponseDTO> createLibraryUser(
-            CreateLibraryUserRequestDTO request);
+    ResponseEntity<LibraryUserResponseDTO> createLibraryUser(CreateLibraryUserRequestDTO request);
 }
