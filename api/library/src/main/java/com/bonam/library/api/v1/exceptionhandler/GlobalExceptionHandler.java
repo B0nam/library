@@ -1,5 +1,6 @@
 package com.bonam.library.api.v1.exceptionhandler;
 
+import com.bonam.library.api.v1.exception.ActiveLoanExistsException;
 import com.bonam.library.api.v1.exception.ResourceNotFoundException;
 import com.bonam.library.api.v1.model.response.LibraryErrorResponse;
 import lombok.NonNull;
@@ -50,6 +51,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(ActiveLoanExistsException.class)
+    public ResponseEntity<LibraryErrorResponse> handleActiveLoanExistsException(ActiveLoanExistsException ex, WebRequest request) {
+        log.warn("Active loan exists: {}", ex.getMessage());
+
+        LibraryErrorResponse errorResponse = new LibraryErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @Override

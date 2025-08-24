@@ -1,5 +1,6 @@
 package com.bonam.library.api.v1.exceptionhandler;
 
+import com.bonam.library.api.v1.exception.ActiveLoanExistsException;
 import com.bonam.library.api.v1.exception.ResourceNotFoundException;
 import com.bonam.library.api.v1.model.response.LibraryErrorResponse;
 import org.junit.jupiter.api.Test;
@@ -87,5 +88,21 @@ class GlobalExceptionHandlerTest {
         assertEquals("field: Field error message", errorResponse.getMessage());
         assertEquals("/api/test", errorResponse.getPath());
         assertEquals("Validation Failed", errorResponse.getError());
+    }
+
+    @Test
+    void handleActiveLoanExistsException_ShouldReturnConflict() {
+        ActiveLoanExistsException exception = new ActiveLoanExistsException("Book", "1");
+        when(webRequest.getDescription(false)).thenReturn("uri=/api/test");
+
+        ResponseEntity<LibraryErrorResponse> responseEntity = globalExceptionHandler.handleActiveLoanExistsException(exception, webRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.CONFLICT.value(), responseEntity.getBody().getStatus());
+        assertEquals("Book already has an active loan with identifier: 1", responseEntity.getBody().getMessage());
+        assertEquals("/api/test", responseEntity.getBody().getPath());
+        assertEquals(HttpStatus.CONFLICT.getReasonPhrase(), responseEntity.getBody().getError());
     }
 }
