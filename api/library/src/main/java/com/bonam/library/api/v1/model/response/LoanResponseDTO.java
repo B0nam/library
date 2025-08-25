@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -20,7 +19,7 @@ public class LoanResponseDTO implements LoanResponseDTOOpenApi {
 
     private LocalDate returnDate;
 
-    private LocalDateTime loanDate;
+    private LocalDate loanDate;
 
     private LoanStatus status;
 }

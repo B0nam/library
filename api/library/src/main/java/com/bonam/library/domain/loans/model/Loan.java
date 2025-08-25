@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "loan")
@@ -48,7 +47,7 @@ public class Loan {
 
     @Column(nullable = false, updatable = false)
     @Builder.Default
-    private LocalDateTime loanDate = LocalDateTime.now();
+    private LocalDate loanDate = LocalDate.now();
 
     @NotNull
     private LocalDate returnDate;
