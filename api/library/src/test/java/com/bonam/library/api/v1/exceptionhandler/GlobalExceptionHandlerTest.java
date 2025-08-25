@@ -1,6 +1,8 @@
 package com.bonam.library.api.v1.exceptionhandler;
 
 import com.bonam.library.api.v1.exception.ActiveLoanExistsException;
+import com.bonam.library.api.v1.exception.DuplicateResourceException;
+import com.bonam.library.api.v1.exception.ResourceInUseException;
 import com.bonam.library.api.v1.exception.ResourceNotFoundException;
 import com.bonam.library.api.v1.model.response.LibraryErrorResponse;
 import jakarta.validation.ConstraintViolation;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -181,5 +185,76 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
         assertEquals("Erro na transação", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void handleDuplicateResourceException_ShouldReturnConflict() {
+        DuplicateResourceException exception = new DuplicateResourceException("Book with ISBN 123456789 already exists");
+        when(webRequest.getDescription(false)).thenReturn("uri=/api/test");
+
+        ResponseEntity<LibraryErrorResponse> responseEntity =
+                globalExceptionHandler.handleDuplicateResourceException(exception, webRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.CONFLICT.value(), responseEntity.getBody().getStatus());
+        assertEquals("Book with ISBN 123456789 already exists", responseEntity.getBody().getMessage());
+        assertEquals("/api/test", responseEntity.getBody().getPath());
+        assertEquals(HttpStatus.CONFLICT.getReasonPhrase(), responseEntity.getBody().getError());
+    }
+
+    @Test
+    void handleResourceInUseException_ShouldReturnConflict() {
+        ResourceInUseException exception = new ResourceInUseException("Book with ID 1 is currently in use");
+        when(webRequest.getDescription(false)).thenReturn("uri=/api/books/1");
+
+        ResponseEntity<LibraryErrorResponse> responseEntity =
+                globalExceptionHandler.handleResourceInUseException(exception, webRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.CONFLICT.value(), responseEntity.getBody().getStatus());
+        assertEquals("Book with ID 1 is currently in use", responseEntity.getBody().getMessage());
+        assertEquals("/api/books/1", responseEntity.getBody().getPath());
+        assertEquals(HttpStatus.CONFLICT.getReasonPhrase(), responseEntity.getBody().getError());
+    }
+
+    @Test
+    void handleDataIntegrityViolationException_ShouldReturnConflict() {
+        DataIntegrityViolationException exception =
+                new DataIntegrityViolationException("Unique constraint violation");
+        when(webRequest.getDescription(false)).thenReturn("uri=/api/books");
+
+        ResponseEntity<LibraryErrorResponse> responseEntity =
+                globalExceptionHandler.handleDataIntegrityViolationException(exception, webRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.CONFLICT.value(), responseEntity.getBody().getStatus());
+        assertEquals("Data Integrity Violation", responseEntity.getBody().getError());
+        assertTrue(responseEntity.getBody().getMessage().contains("Not possible to complete the operation due to data integrity violation"));
+        assertTrue(responseEntity.getBody().getMessage().contains("Unique constraint violation"));
+        assertEquals("/api/books", responseEntity.getBody().getPath());
+    }
+
+    @Test
+    void handleDataIntegrityViolationException_WithNullMessage_ShouldReturnConflict() {
+        DataIntegrityViolationException exception = mock(DataIntegrityViolationException.class);
+        when(exception.getMessage()).thenReturn(null);
+        when(webRequest.getDescription(false)).thenReturn("uri=/api/books");
+
+        ResponseEntity<LibraryErrorResponse> responseEntity =
+                globalExceptionHandler.handleDataIntegrityViolationException(exception, webRequest);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.CONFLICT.value(), responseEntity.getBody().getStatus());
+        assertEquals("Data Integrity Violation", responseEntity.getBody().getError());
+        assertEquals("Not possible to complete the operation due to data integrity violation. ", responseEntity.getBody().getMessage());
+        assertEquals("/api/books", responseEntity.getBody().getPath());
     }
 }

@@ -2,7 +2,7 @@ package com.bonam.library.domain.libraryusers.service;
 
 import com.bonam.library.domain.libraryusers.model.LibraryUser;
 import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ public class GetAllLibraryUserService {
 
     private final LibraryUserRepository libraryUserRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LibraryUser> getAllLibraryUsers() {
         return libraryUserRepository.findAll();
     }

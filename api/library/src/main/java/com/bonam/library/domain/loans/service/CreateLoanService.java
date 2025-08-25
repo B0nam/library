@@ -5,7 +5,7 @@ import com.bonam.library.domain.books.service.GetBookService;
 import com.bonam.library.domain.libraryusers.service.GetLibraryUserService;
 import com.bonam.library.domain.loans.model.Loan;
 import com.bonam.library.domain.loans.repository.LoanRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

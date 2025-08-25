@@ -17,7 +17,6 @@ public class DeleteBookController implements DeleteBookControllerOpenApi {
 
     private final DeleteBookService deleteBookService;
 
-    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         deleteBookService.deleteBook(id);

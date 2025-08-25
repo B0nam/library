@@ -2,7 +2,7 @@ package com.bonam.library.domain.books.service;
 
 import com.bonam.library.domain.books.model.Book;
 import com.bonam.library.domain.books.repository.BookRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

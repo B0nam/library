@@ -1,6 +1,8 @@
 package com.bonam.library.api.v1.exceptionhandler;
 
 import com.bonam.library.api.v1.exception.ActiveLoanExistsException;
+import com.bonam.library.api.v1.exception.DuplicateResourceException;
+import com.bonam.library.api.v1.exception.ResourceInUseException;
 import com.bonam.library.api.v1.exception.ResourceNotFoundException;
 import com.bonam.library.api.v1.model.response.LibraryErrorResponse;
 import jakarta.validation.ConstraintViolationException;
@@ -137,5 +139,53 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<LibraryErrorResponse> handleDuplicateResourceException(DuplicateResourceException ex, WebRequest request) {
+        log.warn("Duplicate resource: {}", ex.getMessage());
+
+        LibraryErrorResponse errorResponse = new LibraryErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(ResourceInUseException.class)
+    public ResponseEntity<LibraryErrorResponse> handleResourceInUseException(ResourceInUseException ex, WebRequest request) {
+        log.warn("Resource in use: {}", ex.getMessage());
+
+        LibraryErrorResponse errorResponse = new LibraryErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<LibraryErrorResponse> handleDataIntegrityViolationException(
+            org.springframework.dao.DataIntegrityViolationException ex, WebRequest request) {
+        log.warn("Data integrity violation: {}", ex.getMessage());
+
+        String message = ex.getMessage();
+
+        LibraryErrorResponse errorResponse = new LibraryErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Data Integrity Violation",
+                "Not possible to complete the operation due to data integrity violation. " + (message != null ? message : ""),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 }
