@@ -1,6 +1,11 @@
 server:
   port: ${SERVER_PORT:8000}
   shutdown: graceful
+  forward-headers-strategy: native
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH:/}
+  tomcat:
+    use-relative-redirects: true
 
 spring:
   application:
