@@ -22,7 +22,6 @@ public class UpdateBookController implements UpdateBookControllerOpenApi {
 
     private final UpdateBookService updateBookService;
 
-    @Override
     @PutMapping("/{id}")
     public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @Valid @RequestBody UpdateBookRequestDTO request) {
         var book = BookDTOMapper.toEntity(request);

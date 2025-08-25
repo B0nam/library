@@ -19,7 +19,6 @@ public class GetBookController implements GetBookControllerOpenApi {
 
     private final GetBookService getBookService;
 
-    @Override
     @GetMapping("/{id}")
     public ResponseEntity<BookResponseDTO> getBook(@PathVariable Long id) {
         var book = getBookService.getBookById(id);

@@ -1,7 +1,7 @@
 package com.bonam.library.domain.libraryusers.service;
 
 import com.bonam.library.domain.libraryusers.repository.LibraryUserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

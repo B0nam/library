@@ -71,7 +71,7 @@ class CreateLoanServiceTest {
 
         var book = new Book();
         book.setId(bookId);
-        book.setTitle("Harry Potter");
+        book.setTitle("Clean Code");
 
         var libraryUser = new LibraryUser();
         libraryUser.setId(libraryUserId);
@@ -82,6 +82,6 @@ class CreateLoanServiceTest {
 
         assertThatThrownBy(() -> createLoanService.createLoan(loan, bookId, libraryUserId))
                 .isInstanceOf(ActiveLoanExistsException.class)
-                .hasMessage("Harry Potter already has an active loan with identifier: 1");
+                .hasMessage("Clean Code already has an active loan with identifier: 1");
     }
 }

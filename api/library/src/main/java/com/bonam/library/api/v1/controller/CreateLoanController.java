@@ -21,7 +21,6 @@ public class CreateLoanController implements CreateLoanControllerOpenApi {
 
     private final CreateLoanService createLoanService;
 
-    @Override
     @PostMapping
     public ResponseEntity<LoanResponseDTO> createLoan(@RequestBody @Valid CreateLoanRequestDTO request) {
         var loan = LoanDTOMapper.toEntity(request);
