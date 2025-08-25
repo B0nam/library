@@ -34,3 +34,8 @@ management:  #TODO: VERIFICAR CONFIGURACOES DO HEALTHCHECK
   health:
     defaults:
       enabled: false
+
+google:
+  books:
+    api:
+      key: "" # TODO: ADICIONAR VARIAVEIS DE AMBIENTE

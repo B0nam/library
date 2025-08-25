@@ -107,7 +107,7 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.CONFLICT.value(), responseEntity.getBody().getStatus());
-        assertEquals("Book already has an active loan", responseEntity.getBody().getMessage());
+        assertEquals("Book already has an active loan with identifier: 1", responseEntity.getBody().getMessage());
         assertEquals("/api/test", responseEntity.getBody().getPath());
         assertEquals(HttpStatus.CONFLICT.getReasonPhrase(), responseEntity.getBody().getError());
     }
