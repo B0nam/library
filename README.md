@@ -44,7 +44,7 @@ Este projeto foi desenvolvido para criar um sistema completo de gestão de bibli
 - ID do Livro
 - Data de Empréstimo
 - Data de Devolução
-- Status (PENDENTE, EMPRESTADO, DEVOLVIDO)
+- Status (EMPRESTADO, DEVOLVIDO)
 
 ## API REST
 
