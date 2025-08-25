@@ -32,7 +32,7 @@ class GetLoanAvailabilityServiceTest {
         book.setId(bookId);
 
         when(getBookService.getBookById(bookId)).thenReturn(book);
-        when(loanRepository.existsLoanByBookIdAndStatusNot(bookId, LoanStatus.RETURNED.toString())).thenReturn(true);
+        when(loanRepository.existsLoanByBookIdAndStatusNot(bookId, LoanStatus.RETURNED)).thenReturn(true);
 
         var result = getLoanAvailabilityService.isActiveLoanForBookId(bookId);
 
@@ -46,7 +46,7 @@ class GetLoanAvailabilityServiceTest {
         book.setId(bookId);
 
         when(getBookService.getBookById(bookId)).thenReturn(book);
-        when(loanRepository.existsLoanByBookIdAndStatusNot(bookId, LoanStatus.RETURNED.toString())).thenReturn(false);
+        when(loanRepository.existsLoanByBookIdAndStatusNot(bookId, LoanStatus.RETURNED)).thenReturn(false);
 
         var result = getLoanAvailabilityService.isActiveLoanForBookId(bookId);
 
