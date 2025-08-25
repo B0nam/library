@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: library
+  namespace: library
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: library
+  template:
+    metadata:
+      labels:
+        app: library
+    spec:
+      containers:
+        - name: library
+          image: b0nam/library:main
+          ports:
+            - containerPort: 8000
+          env:
+            - name: SERVER_PORT
+              value: "8000"
+            - name: DB_HOST
+              value: "postgres"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/library_db"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "library_db"
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: library-db-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: library-db-credentials
+                  key: password
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: library-db-credentials
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: library-db-credentials
+                  key: password
+            - name: JPA_DDL_AUTO
+              value: "update"
+            - name: SHOW_SQL
+              value: "false"
+            - name: FORMAT_SQL
+              value: "false"
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: library-db-credentials
+                  key: google-books-api-key
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/BOOT-INF/classes/application.yml
+              subPath: application.yml
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+      volumes:
+        - name: config-volume
+          configMap:
+            name: library-config
