@@ -74,7 +74,7 @@ cd library
 
 2. configure a chave do google api no arquivo application.yml
 
-3. Execute com Docker Compose:
+3. Execute com Docker Compose (inclui o banco de dados e a aplicação):
 ```bash
 docker-compose up -d
 ```
