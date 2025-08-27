@@ -4,7 +4,7 @@ Sistema de gestão de biblioteca com recursos de recomendação de livros e inte
 
 ## Sobre o Projeto
 
-Este projeto foi desenvolvido para criar um sistema completo de gestão de biblioteca, permitindo o cadastro de livros, usuários e controle de empréstimos, com funcionalidades adicionais de recomendação de livros baseada nos gostos dos usuários.
+Este projeto foi desenvolvido para criar um sistema completo de gestão de biblioteca, permitindo o cadastro de livros, usuários e controle de empréstimos, com funcionalidades adicionais de recomendação de livros baseada nos emprestimos dos usuários.
 
 ### Principais Recursos
 
@@ -20,31 +20,7 @@ Este projeto foi desenvolvido para criar um sistema completo de gestão de bibli
 - **Banco de Dados**: PostgreSQL
 - **Containerização**: Docker e Docker Compose
 - **Orquestração**: Kubernetes
-
-## Modelo de Dados
-
-### Usuários
-- ID
-- Nome
-- Email
-- Telefone
-- Data de Cadastro
-
-### Livros
-- ID
-- Título
-- Autor
-- ISBN
-- Data de Publicação
-- Categoria
-
-### Empréstimos
-- ID
-- ID do Usuário
-- ID do Livro
-- Data de Empréstimo
-- Data de Devolução
-- Status (EMPRESTADO, DEVOLVIDO)
+- **CI/CD**: Github Actions com o dockerhub
 
 ## API REST
 
@@ -76,7 +52,7 @@ Para acessar a documentação da API, visite:
 
 #### Google Books
 - `GET /api/v1/google-books/search/{title}` - Buscar livros no Google Books
-- `POST /api/v1/google-books/create/{googleBookId}` - Adicionar livro do Google Books à biblioteca
+- `POST /api/v1/google-books/create/{googleBookId}` - Adicionar livro do Google Books à biblioteca a partir do id do livro
 
 #### Recomendações
 - `GET /api/v1/recommendations/user/{id}` - Obter recomendações para um usuário
@@ -88,7 +64,7 @@ Para acessar a documentação da API, visite:
 - Java 21+ (para desenvolvimento local)
 - Gradle (para desenvolvimento local)
 
-### Usando Docker Compose
+### Usando Docker
 
 1. Clone o repositório:
 ```bash
@@ -96,18 +72,20 @@ git clone https://github.com/B0nam/library.git
 cd library
 ```
 
-2. Execute com Docker Compose:
+2. configure a chave do google api no arquivo application.yml
+
+3. Execute com Docker Compose:
 ```bash
 docker-compose up -d
 ```
 
-3. Acesse:
+4. Acesse:
    - API: http://localhost:8000
    - Swagger: http://localhost:8000/swagger-ui/index.html
 
 ### Em Produção
 
-O sistema está implantado em produção e pode ser acessado através da URL:
+O sistema está implantado em produção em uma VPS privada com um cluster kubernetes configurado e pode ser acessado através da URL:
 
 - https://library.bonam.cc
 - Documentação API (Swagger): https://library.bonam.cc/swagger-ui/index.html
@@ -121,7 +99,7 @@ O projeto segue uma arquitetura limpa (Clean Architecture) com as seguintes cama
 - **API**: Controladores REST e DTOs
 - **Domain**: Entidades de domínio, serviços e regras de negócio
 
-O padrão utilizado para os controllers e services foi o de UseCases.
+O padrão utilizado para os controllers e services foi o de UseCases separando as resposabilidades respeitando o SOLID.
 
 ## Integração com a API do Google Books
 
@@ -159,18 +137,6 @@ public GetGoogleBooksService(WebClient.Builder builder) {
      ```
      POST /api/v1/google-books/create/{googleBookId}
      ```
-
-4. **Mapeamento de Dados**: O sistema faz o mapeamento dos dados recebidos da API do Google Books para o modelo de dados da aplicação:
-
-```java
-return Book.builder()
-        .title(info.getTitle())
-        .author(author)
-        .isbn(isbn)
-        .publishDate(parsePublishedDate(info.getPublishedDate()))
-        .category(category)
-        .build();
-```
 
 ### Fluxo de Uso
 
