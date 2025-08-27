@@ -16,6 +16,7 @@ spec:
       containers:
         - name: library
           image: b0nam/library:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
           env:
